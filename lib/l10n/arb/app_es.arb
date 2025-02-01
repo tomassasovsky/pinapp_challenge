@@ -1,7 +1,8 @@
 {
     "@@locale": "es",
-    "counterAppBarTitle": "Contador",
-    "@counterAppBarTitle": {
-        "description": "Texto mostrado en la AppBar de la página del contador"
-    }
+    "posts": "Publicaciones",
+    "failedToLoadPosts": "Error al cargar las publicaciones",
+    "failedToLoadComments": "Error al cargar los comentarios",
+    "retry": "Reintentar",
+    "commentsForPost": "Comentarios para la publicación #{postNumber}"
 }
