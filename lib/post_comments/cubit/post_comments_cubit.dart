@@ -16,8 +16,9 @@ class PostCommentsCubit extends Cubit<PostCommentsState> {
     emit(state.copyWith(status: PostCommentsStatus.loading));
 
     try {
-      final comments =
-          await _commentsRepository.getComments(postId: state.post.id);
+      final comments = await _commentsRepository
+          .getComments(postId: state.post.id)
+          .timeout(const Duration(seconds: 10));
 
       emit(
         state.copyWith(

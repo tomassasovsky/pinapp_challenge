@@ -4,6 +4,8 @@ Una aplicación Flutter que demuestra el uso de repositorios para obtener public
 
 > Existe una versión en inglés de este documento. Puedes encontrarla [aquí](README.md).
 
+[▶ Ver video](https://drive.google.com/file/d/16pBPPZZtOXpD0ujZ4PfkzMZr9mFTUDvv/view)
+
 ## Características
 
 - Muestra una lista de publicaciones con detalles (título, cuerpo).

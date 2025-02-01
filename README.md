@@ -4,6 +4,8 @@ A Flutter application demonstrating the use of repositories to fetch posts and c
 
 > A Spanish version of this README is available [here](README.es.md).
 
+[▶ Watch Video](https://drive.google.com/file/d/16pBPPZZtOXpD0ujZ4PfkzMZr9mFTUDvv/view)
+
 ## Features
 
 - Displays a list of posts with details (title, body).

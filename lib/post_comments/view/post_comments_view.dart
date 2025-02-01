@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp_challenge/l10n/l10n.dart';
 import 'package:pinapp_challenge/post_comments/cubit/post_comments_cubit.dart';
 import 'package:pinapp_challenge/post_list/widget/post_widget.dart';
+import 'package:pinapp_challenge/retry_widget.dart';
 import 'package:posts_repository/posts_repository.dart';
 
 class PostCommentsPage extends StatelessWidget {
@@ -47,7 +48,10 @@ class PostCommentsView extends StatelessWidget {
             PostCommentsStatus.loading =>
               const Center(child: CircularProgressIndicator()),
             PostCommentsStatus.success => _DataBody(state.post, state.comments),
-            PostCommentsStatus.failure => const _RetryBody(),
+            PostCommentsStatus.failure => RetryWidget(
+                errorMessage: context.l10n.failedToLoadComments,
+                onRetry: context.read<PostCommentsCubit>().getComments,
+              ),
             _ => const SizedBox.shrink(),
           },
         );
@@ -67,18 +71,21 @@ class _DataBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(title: Text(context.l10n.commentsForPost(post.id))),
-        SliverToBoxAdapter(child: PostWidget(post)),
-        SliverList.builder(
-          itemCount: comments.length,
-          itemBuilder: (context, index) {
-            final comment = comments[index];
-            return _CommentWidget(comment);
-          },
-        ),
-      ],
+    return RefreshIndicator(
+      onRefresh: context.read<PostCommentsCubit>().getComments,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(title: Text(context.l10n.commentsForPost(post.id))),
+          SliverToBoxAdapter(child: PostWidget(post)),
+          SliverList.builder(
+            itemCount: comments.length,
+            itemBuilder: (context, index) {
+              final comment = comments[index];
+              return _CommentWidget(comment);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -107,27 +114,6 @@ class _CommentWidget extends StatelessWidget {
           Text(
             context.l10n.postedBy(comment.email),
             style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RetryBody extends StatelessWidget {
-  const _RetryBody();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(context.l10n.failedToLoadComments),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: context.read<PostCommentsCubit>().getComments,
-            child: Text(context.l10n.retry),
           ),
         ],
       ),

@@ -15,7 +15,10 @@ class PostListCubit extends Cubit<PostListState> {
   Future<void> getPosts() async {
     emit(state.copyWith(status: PostListStatus.loading));
     try {
-      final posts = await _postsRepository.getPosts();
+      final posts = await _postsRepository
+          .getPosts()
+          .timeout(const Duration(seconds: 10));
+
       emit(state.copyWith(status: PostListStatus.success, posts: posts));
     } on Exception {
       emit(state.copyWith(status: PostListStatus.failure));
