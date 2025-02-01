@@ -34,8 +34,8 @@ Una aplicación Flutter que demuestra el uso de repositorios para obtener public
 1. Clona el repositorio:
 
    ```bash
-   git clone <repository_url>
-   cd <repository_folder>
+   git clone https://github.com/tomassasovsky/pinapp_challenge
+   cd pinapp_challenge
    ```
 
 2. Instala las dependencias:

@@ -34,8 +34,8 @@ A Flutter application demonstrating the use of repositories to fetch posts and c
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
-   cd <repository_folder>
+   git clone https://github.com/tomassasovsky/pinapp_challenge
+   cd pinapp_challenge
    ```
 
 2. Install dependencies:
