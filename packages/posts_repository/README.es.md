@@ -93,4 +93,3 @@ final posts = PostModel.fromJsonList(jsonList);
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT. Consulta [LICENSE](LICENSE) para más detalles.
-

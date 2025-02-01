@@ -118,11 +118,11 @@ flutter test
 
 ## Repositorio de Publicaciones
 
-Para información sobre el repositorio de publicaciones, consulta el [README del Repositorio de Publicaciones](packages/posts_repository/README.md).
+Para información sobre el repositorio de publicaciones, consulta el [README del Repositorio de Publicaciones](packages/posts_repository/README.es.md).
 
 ## Repositorio de Comentarios
 
-Para información sobre el repositorio de comentarios, consulta el [README del Repositorio de Comentarios](packages/comments_repository/README.md).
+Para información sobre el repositorio de comentarios, consulta el [README del Repositorio de Comentarios](packages/comments_repository/README.es.md).
 
 ## Licencia
 
