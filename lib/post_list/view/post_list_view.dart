@@ -65,6 +65,7 @@ class _BodyData extends StatelessWidget {
             snap: true,
           ),
           SliverList.builder(
+            itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
               return PostWidget(
