@@ -66,22 +66,25 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 /// Data class representing a comment.
 ///
+/// This model is used to transfer comment data between Flutter and the
+/// native platform implementations.
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct CommentModel {
-  var postId: Int64? = nil
-  var id: Int64? = nil
-  var name: String? = nil
-  var email: String? = nil
-  var body: String? = nil
+  var postId: Int64
+  var id: Int64
+  var name: String
+  var email: String
+  var body: String
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CommentModel? {
-    let postId: Int64? = nilOrValue(pigeonVar_list[0])
-    let id: Int64? = nilOrValue(pigeonVar_list[1])
-    let name: String? = nilOrValue(pigeonVar_list[2])
-    let email: String? = nilOrValue(pigeonVar_list[3])
-    let body: String? = nilOrValue(pigeonVar_list[4])
+    let postId = pigeonVar_list[0] as! Int64
+    let id = pigeonVar_list[1] as! Int64
+    let name = pigeonVar_list[2] as! String
+    let email = pigeonVar_list[3] as! String
+    let body = pigeonVar_list[4] as! String
 
     return CommentModel(
       postId: postId,
@@ -138,19 +141,56 @@ class CommentModelPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable 
   static let shared = CommentModelPigeonCodec(readerWriter: CommentModelPigeonCodecReaderWriter())
 }
 
+
 /// Host API for fetching comments from the native side.
 ///
-/// This asynchronous method returns a list of [CommentModel] objects after
-/// performing a REST API call natively.
+/// This interface defines methods that Flutter can call to communicate with
+/// native platform code. The implementation of these methods will be handled
+/// natively on iOS (Swift) and Android (Kotlin).
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol CommentApi {
-  /// Sets the base URL configuration.
-  /// The native side should store these values and use them to construct the
-  /// URL.
+  /// Sets the base URL configuration for the API requests.
+  ///
+  /// This method should be implemented natively to store the given
+  /// values (`scheme`, `authority`, and `port`), which will be used
+  /// to construct API request URLs.
+  ///
+  /// - Parameters:
+  ///   - [scheme]: The URL scheme (e.g., "http" or "https").
+  ///   - [authority]: The host (e.g., "jsonplaceholder.typicode.com").
+  ///   - [port]: The port number (e.g., 443 for HTTPS, 80 for HTTP).
   func setBaseUrl(scheme: String, authority: String, port: Int64) throws
-  /// Returns a list of [CommentModel] instances for the given postId.
-  func getComments(postId: Int64) throws -> [CommentModel]
+  /// Asynchronously fetches a list of [CommentModel] instances for a given
+  /// post ID.
+  ///
+  /// This method is annotated with `@async`, which instructs Pigeon to generate
+  /// an asynchronous API on the Flutter side. Instead of returning a direct
+  /// result, the method will return a `Future<List<CommentModel>>`, allowing
+  /// the caller to await the response asynchronously.
+  ///
+  /// ### Impact of `@async` on Native Implementations:
+  /// - **Swift (iOS)**: The generated Swift method will use a completion
+  ///   handler (`completion: @escaping (Result<[CommentModel], Error>)
+  ///   -> Void`), meaning that the native implementation must execute the
+  ///   network request asynchronously and invoke the completion handler once
+  ///   the data is available.
+  ///
+  /// - **Kotlin (Android)**: The method signature will include a callback
+  ///   parameter (`callback: (Result<List<CommentModel>>) -> Unit`), requiring
+  ///   the native implementation to execute the network call in a coroutine
+  ///   and return the result asynchronously.
+  ///
+  /// - **Flutter (Dart)**: The generated Dart method will return a
+  ///   `Future<List<CommentModel>>`, ensuring that calls to `getComments()` do
+  ///   not block the main UI thread.
+  ///
+  /// - Parameters:
+  ///   - [postId]: The ID of the post whose comments should be retrieved.
+  ///
+  /// - Returns: A `Future<List<CommentModel>>` resolving to the list of
+  ///   comments.
+  func getComments(postId: Int64, completion: @escaping (Result<[CommentModel], Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -159,9 +199,16 @@ class CommentApiSetup {
   /// Sets up an instance of `CommentApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CommentApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    /// Sets the base URL configuration.
-    /// The native side should store these values and use them to construct the
-    /// URL.
+    /// Sets the base URL configuration for the API requests.
+    ///
+    /// This method should be implemented natively to store the given
+    /// values (`scheme`, `authority`, and `port`), which will be used
+    /// to construct API request URLs.
+    ///
+    /// - Parameters:
+    ///   - [scheme]: The URL scheme (e.g., "http" or "https").
+    ///   - [authority]: The host (e.g., "jsonplaceholder.typicode.com").
+    ///   - [port]: The port number (e.g., 443 for HTTPS, 80 for HTTP).
     let setBaseUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.comments_repository.CommentApi.setBaseUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setBaseUrlChannel.setMessageHandler { message, reply in
@@ -179,17 +226,47 @@ class CommentApiSetup {
     } else {
       setBaseUrlChannel.setMessageHandler(nil)
     }
-    /// Returns a list of [CommentModel] instances for the given postId.
+    /// Asynchronously fetches a list of [CommentModel] instances for a given
+    /// post ID.
+    ///
+    /// This method is annotated with `@async`, which instructs Pigeon to generate
+    /// an asynchronous API on the Flutter side. Instead of returning a direct
+    /// result, the method will return a `Future<List<CommentModel>>`, allowing
+    /// the caller to await the response asynchronously.
+    ///
+    /// ### Impact of `@async` on Native Implementations:
+    /// - **Swift (iOS)**: The generated Swift method will use a completion
+    ///   handler (`completion: @escaping (Result<[CommentModel], Error>)
+    ///   -> Void`), meaning that the native implementation must execute the
+    ///   network request asynchronously and invoke the completion handler once
+    ///   the data is available.
+    ///
+    /// - **Kotlin (Android)**: The method signature will include a callback
+    ///   parameter (`callback: (Result<List<CommentModel>>) -> Unit`), requiring
+    ///   the native implementation to execute the network call in a coroutine
+    ///   and return the result asynchronously.
+    ///
+    /// - **Flutter (Dart)**: The generated Dart method will return a
+    ///   `Future<List<CommentModel>>`, ensuring that calls to `getComments()` do
+    ///   not block the main UI thread.
+    ///
+    /// - Parameters:
+    ///   - [postId]: The ID of the post whose comments should be retrieved.
+    ///
+    /// - Returns: A `Future<List<CommentModel>>` resolving to the list of
+    ///   comments.
     let getCommentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.comments_repository.CommentApi.getComments\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getCommentsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let postIdArg = args[0] as! Int64
-        do {
-          let result = try api.getComments(postId: postIdArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+        api.getComments(postId: postIdArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
         }
       }
     } else {

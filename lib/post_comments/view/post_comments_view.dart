@@ -97,15 +97,15 @@ class _CommentWidget extends StatelessWidget {
         spacing: 8,
         children: [
           Text(
-            comment.name ?? '',
+            comment.name,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           Text(
-            comment.body ?? '',
+            comment.body,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Text(
-            context.l10n.postedBy(comment.email ?? ''),
+            context.l10n.postedBy(comment.email),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

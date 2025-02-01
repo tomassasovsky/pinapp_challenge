@@ -34,11 +34,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation CommentModel
-+ (instancetype)makeWithPostId:(nullable NSNumber *)postId
-    id:(nullable NSNumber *)id
-    name:(nullable NSString *)name
-    email:(nullable NSString *)email
-    body:(nullable NSString *)body {
++ (instancetype)makeWithPostId:(NSInteger )postId
+    id:(NSInteger )id
+    name:(NSString *)name
+    email:(NSString *)email
+    body:(NSString *)body {
   CommentModel* pigeonResult = [[CommentModel alloc] init];
   pigeonResult.postId = postId;
   pigeonResult.id = id;
@@ -49,8 +49,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 + (CommentModel *)fromList:(NSArray<id> *)list {
   CommentModel *pigeonResult = [[CommentModel alloc] init];
-  pigeonResult.postId = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.id = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.postId = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.id = [GetNullableObjectAtIndex(list, 1) integerValue];
   pigeonResult.name = GetNullableObjectAtIndex(list, 2);
   pigeonResult.email = GetNullableObjectAtIndex(list, 3);
   pigeonResult.body = GetNullableObjectAtIndex(list, 4);
@@ -61,8 +61,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    self.postId ?: [NSNull null],
-    self.id ?: [NSNull null],
+    @(self.postId),
+    @(self.id),
     self.name ?: [NSNull null],
     self.email ?: [NSNull null],
     self.body ?: [NSNull null],
@@ -122,9 +122,16 @@ void SetUpCommentApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Commen
 
 void SetUpCommentApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<CommentApi> *api, NSString *messageChannelSuffix) {
   messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";
-  /// Sets the base URL configuration.
-  /// The native side should store these values and use them to construct the
-  /// URL.
+  /// Sets the base URL configuration for the API requests.
+  ///
+  /// This method should be implemented natively to store the given
+  /// values (`scheme`, `authority`, and `port`), which will be used
+  /// to construct API request URLs.
+  ///
+  /// - Parameters:
+  ///   - [scheme]: The URL scheme (e.g., "http" or "https").
+  ///   - [authority]: The host (e.g., "jsonplaceholder.typicode.com").
+  ///   - [port]: The port number (e.g., 443 for HTTPS, 80 for HTTP).
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
@@ -146,7 +153,35 @@ void SetUpCommentApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns a list of [CommentModel] instances for the given postId.
+  /// Asynchronously fetches a list of [CommentModel] instances for a given
+  /// post ID.
+  ///
+  /// This method is annotated with `@async`, which instructs Pigeon to generate
+  /// an asynchronous API on the Flutter side. Instead of returning a direct
+  /// result, the method will return a `Future<List<CommentModel>>`, allowing
+  /// the caller to await the response asynchronously.
+  ///
+  /// ### Impact of `@async` on Native Implementations:
+  /// - **Swift (iOS)**: The generated Swift method will use a completion
+  ///   handler (`completion: @escaping (Result<[CommentModel], Error>)
+  ///   -> Void`), meaning that the native implementation must execute the
+  ///   network request asynchronously and invoke the completion handler once
+  ///   the data is available.
+  ///
+  /// - **Kotlin (Android)**: The method signature will include a callback
+  ///   parameter (`callback: (Result<List<CommentModel>>) -> Unit`), requiring
+  ///   the native implementation to execute the network call in a coroutine
+  ///   and return the result asynchronously.
+  ///
+  /// - **Flutter (Dart)**: The generated Dart method will return a
+  ///   `Future<List<CommentModel>>`, ensuring that calls to `getComments()` do
+  ///   not block the main UI thread.
+  ///
+  /// - Parameters:
+  ///   - [postId]: The ID of the post whose comments should be retrieved.
+  ///
+  /// - Returns: A `Future<List<CommentModel>>` resolving to the list of
+  ///   comments.
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
@@ -154,13 +189,13 @@ void SetUpCommentApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
         binaryMessenger:binaryMessenger
         codec:nullGetCommentModelCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getCommentsPostId:error:)], @"CommentApi api (%@) doesn't respond to @selector(getCommentsPostId:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(getCommentsPostId:completion:)], @"CommentApi api (%@) doesn't respond to @selector(getCommentsPostId:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSInteger arg_postId = [GetNullableObjectAtIndex(args, 0) integerValue];
-        FlutterError *error;
-        NSArray<CommentModel *> *output = [api getCommentsPostId:arg_postId error:&error];
-        callback(wrapResult(output, error));
+        [api getCommentsPostId:arg_postId completion:^(NSArray<CommentModel *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
