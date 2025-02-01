@@ -4,5 +4,6 @@
     "failedToLoadPosts": "Failed to load posts",
     "failedToLoadComments": "Failed to load comments",
     "retry": "Retry",
-    "commentsForPost": "Comments for post #{postNumber}"
+    "commentsForPost": "Comments for post #{postNumber}",
+    "postedBy": "Posted by {author}"
 }

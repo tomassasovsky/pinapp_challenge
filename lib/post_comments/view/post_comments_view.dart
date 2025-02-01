@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp_challenge/l10n/l10n.dart';
 import 'package:pinapp_challenge/post_comments/cubit/post_comments_cubit.dart';
+import 'package:pinapp_challenge/post_list/widget/post_widget.dart';
 import 'package:posts_repository/posts_repository.dart';
 
 class PostCommentsPage extends StatelessWidget {
@@ -41,13 +42,11 @@ class PostCommentsView extends StatelessWidget {
     return BlocBuilder<PostCommentsCubit, PostCommentsState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(context.l10n.commentsForPost(state.post.id)),
-          ),
+          appBar: state.status != PostCommentsStatus.success ? AppBar() : null,
           body: switch (state.status) {
             PostCommentsStatus.loading =>
               const Center(child: CircularProgressIndicator()),
-            PostCommentsStatus.success => _DataBody(state.comments),
+            PostCommentsStatus.success => _DataBody(state.post, state.comments),
             PostCommentsStatus.failure => const _RetryBody(),
             _ => const SizedBox.shrink(),
           },
@@ -58,21 +57,59 @@ class PostCommentsView extends StatelessWidget {
 }
 
 class _DataBody extends StatelessWidget {
-  const _DataBody(this.comments);
+  const _DataBody(
+    this.post,
+    this.comments,
+  );
 
+  final PostModel post;
   final List<CommentModel> comments;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: comments.length,
-      itemBuilder: (context, index) {
-        final comment = comments[index];
-        return ListTile(
-          title: Text(comment.name ?? ''),
-          subtitle: Text(comment.body ?? ''),
-        );
-      },
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(title: Text(context.l10n.commentsForPost(post.id))),
+        SliverToBoxAdapter(child: PostWidget(post)),
+        SliverList.builder(
+          itemCount: comments.length,
+          itemBuilder: (context, index) {
+            final comment = comments[index];
+            return _CommentWidget(comment);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _CommentWidget extends StatelessWidget {
+  const _CommentWidget(this.comment);
+
+  final CommentModel comment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
+        children: [
+          Text(
+            comment.name ?? '',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          Text(
+            comment.body ?? '',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Text(
+            context.l10n.postedBy(comment.email ?? ''),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
     );
   }
 }

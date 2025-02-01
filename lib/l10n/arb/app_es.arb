@@ -4,5 +4,6 @@
     "failedToLoadPosts": "Error al cargar las publicaciones",
     "failedToLoadComments": "Error al cargar los comentarios",
     "retry": "Reintentar",
-    "commentsForPost": "Comentarios para la publicación #{postNumber}"
+    "commentsForPost": "Comentarios para la publicación #{postNumber}",
+    "postedBy": "Publicado por {author}"
 }

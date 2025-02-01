@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp_challenge/l10n/l10n.dart';
 import 'package:pinapp_challenge/post_comments/view/post_comments_view.dart';
 import 'package:pinapp_challenge/post_list/cubit/post_list_cubit.dart';
+import 'package:pinapp_challenge/post_list/widget/post_widget.dart';
 import 'package:posts_repository/posts_repository.dart';
 
 class PostListPage extends StatelessWidget {
@@ -29,7 +30,9 @@ class PostListView extends StatelessWidget {
     return BlocBuilder<PostListCubit, PostListState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(title: Text(context.l10n.posts)),
+          appBar: state.status != PostListStatus.success
+              ? AppBar(title: Text(context.l10n.posts))
+              : null,
           body: switch (state.status) {
             PostListStatus.success => _BodyData(state.posts),
             PostListStatus.failure => const _RetryBody(),
@@ -48,19 +51,26 @@ class _BodyData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        final post = posts[index];
-        return ListTile(
-          title: Text(post.title),
-          subtitle: Text(post.body),
-          onTap: () => Navigator.of(context).pushNamed(
-            PostCommentsPage.route,
-            arguments: post,
-          ),
-        );
-      },
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          title: Text(context.l10n.posts),
+          floating: true,
+          snap: true,
+        ),
+        SliverList.builder(
+          itemBuilder: (context, index) {
+            final post = posts[index];
+            return PostWidget(
+              post,
+              onTap: () => Navigator.of(context).pushNamed(
+                PostCommentsPage.route,
+                arguments: post,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
