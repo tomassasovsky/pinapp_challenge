@@ -1,5 +1,7 @@
 # PinApp Challenge
 
+![codecov](coverage_badge.svg)
+
 Una aplicación Flutter que demuestra el uso de repositorios para obtener publicaciones y comentarios desde una API REST e integración nativa utilizando Pigeon. La aplicación usa BLoC para la gestión del estado y admite varios entornos (desarrollo, staging y producción).
 
 > Existe una versión en inglés de este documento. Puedes encontrarla [aquí](README.md).
