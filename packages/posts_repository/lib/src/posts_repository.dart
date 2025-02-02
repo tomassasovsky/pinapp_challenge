@@ -56,6 +56,8 @@ class PostsRepository {
   ///
   /// Throws an [HttpException] if the request fails or returns a non‑2xx
   /// status.
+  ///
+  /// Throws a [FormatException] if the response body is not a JSON array.
   Future<List<PostModel>> getPosts() async {
     final response = await _get<JSONLIST>(
       Uri(
