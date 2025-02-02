@@ -77,6 +77,10 @@ class _BodyData extends StatelessWidget {
               );
             },
           ),
+          const SliverSafeArea(
+            sliver: SliverToBoxAdapter(child: SizedBox()),
+            top: false,
+          ),
         ],
       ),
     );

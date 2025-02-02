@@ -43,7 +43,9 @@ class PostCommentsView extends StatelessWidget {
     return BlocBuilder<PostCommentsCubit, PostCommentsState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: state.status != PostCommentsStatus.success ? AppBar() : null,
+          appBar: state.status != PostCommentsStatus.success
+              ? AppBar(title: Text(context.l10n.commentsForPost(state.post.id)))
+              : null,
           body: switch (state.status) {
             PostCommentsStatus.loading =>
               const Center(child: CircularProgressIndicator()),
@@ -83,6 +85,10 @@ class _DataBody extends StatelessWidget {
               final comment = comments[index];
               return _CommentWidget(comment);
             },
+          ),
+          const SliverSafeArea(
+            sliver: SliverToBoxAdapter(child: SizedBox()),
+            top: false,
           ),
         ],
       ),
