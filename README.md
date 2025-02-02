@@ -118,6 +118,17 @@ flutter test
 └── packages/comments_repository      # Comments repository package
 ```
 
+## Dependencies
+ - bloc & flutter_bloc (state management)
+ - posts_repository
+ - comments_repository
+ - equatable (value equality)
+ - intl & flutter_localizations (internationalization support)
+ - Bloc Test, Flutter Test y mocktail (testing)
+ - very_good_analysis (static analysis)
+ - pigeon (native integration through code generation)
+ - http
+
 ## Posts Repository
 
 For information on the posts repository, see the [Posts Repository README](packages/posts_repository/README.md).
