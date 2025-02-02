@@ -47,14 +47,12 @@ class PostCommentsView extends StatelessWidget {
               ? AppBar(title: Text(context.l10n.commentsForPost(state.post.id)))
               : null,
           body: switch (state.status) {
-            PostCommentsStatus.loading =>
-              const Center(child: CircularProgressIndicator()),
             PostCommentsStatus.success => _DataBody(state.post, state.comments),
             PostCommentsStatus.failure => RetryWidget(
                 errorMessage: context.l10n.failedToLoadComments,
                 onRetry: context.read<PostCommentsCubit>().getComments,
               ),
-            _ => const SizedBox.shrink(),
+            _ => const Center(child: CircularProgressIndicator()),
           },
         );
       },
