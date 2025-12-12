@@ -1,7 +1,7 @@
 import 'package:comments_repository/comments_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pinapp_challenge/l10n/l10n.dart';
+import 'package:pinapp_challenge/l10n/arb/app_localizations.dart';
 import 'package:pinapp_challenge/post_comments/view/post_comments_view.dart';
 import 'package:pinapp_challenge/post_list/view/post_list_view.dart';
 import 'package:posts_repository/posts_repository.dart';

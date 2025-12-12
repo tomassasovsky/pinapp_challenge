@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pinapp_challenge/l10n/l10n.dart';
+import 'package:pinapp_challenge/l10n/arb/app_localizations.dart';
 import 'package:pinapp_challenge/post_comments/cubit/post_comments_cubit.dart';
 import 'package:pinapp_challenge/post_comments/view/post_comments_view.dart';
 import 'package:pinapp_challenge/post_list/widget/post_widget.dart';

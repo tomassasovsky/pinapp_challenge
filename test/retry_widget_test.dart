@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pinapp_challenge/l10n/l10n.dart';
+import 'package:pinapp_challenge/l10n/arb/app_localizations.dart';
 import 'package:pinapp_challenge/retry_widget.dart';
 
 // Fake L10n implementation
